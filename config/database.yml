@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username: postgres
+  password: 'postgres'
+  host: localhost
+  port: 5432
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: guess_the_country_development
+test:
+  <<: *default
+  database: guess_the_country_test
+production:
+  primary: &primary_production
+    <<: *default
+    database: guess_the_country_production
+    username: guess_the_country
+    password: <%= ENV["GUESS_THE_COUNTRY_DATABASE_PASSWORD"] %>
+  cache:
+    <<: *primary_production
+    database: guess_the_country_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: guess_the_country_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: guess_the_country_production_cable
+    migrations_paths: db/cable_migrate
